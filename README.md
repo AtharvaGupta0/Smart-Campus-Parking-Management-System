@@ -1,3 +1,20 @@
+
+<h2 align="center">Interactive Project Presentation</h2>
+
+<p align="center">
+  <a href="https://atharvagupta0.github.io/Smart-Campus-Parking-Management-System/Presentation/Sinister_Three_Presentation_Editorial.html">
+    <img src="https://img.shields.io/badge/Launch-Interactive_Presentation-2563EB?style=for-the-badge&logo=githubpages&logoColor=white"
+         alt="Launch Interactive Presentation">
+  </a>
+</p>
+
+<p align="center">
+  Explore the system architecture, features, implementation,
+  and workflow through our interactive HTML presentation.
+</p>
+
+
+
 # Smart Campus Parking Management System
 
 A compact console application written in ISO C17. It registers students,
