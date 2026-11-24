@@ -1,0 +1,2012 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <title>Sinister Three — Smart Campus Parking</title>
+    <style>
+      :root {
+        --bg: #0b1118;
+        --panel: #131f29;
+        --line: #31414c;
+        --muted: #9bafbc;
+        --text: #f4f2ec;
+        --gold: #dfb67b;
+        --green: #64c5a1;
+        --red: #ec827b;
+        --blue: #8dc7e7;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+      }
+      body {
+        overflow: hidden;
+      }
+      button {
+        font: inherit;
+      }
+      #deck {
+        height: 100dvh;
+        position: relative;
+        background:
+          radial-gradient(ellipse at 83% 18%, #1a2c37 0%, transparent 45%),
+          #0b1118;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: clamp(28px, 5vw, 86px) clamp(35px, 7vw, 120px) 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(14px) scale(0.993);
+        pointer-events: none;
+        transition:
+          opacity 0.42s ease,
+          transform 0.42s ease;
+        overflow: auto;
+      }
+      .slide.active {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+      .slide:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(#ffffff05 1px, transparent 1px),
+          linear-gradient(90deg, #ffffff05 1px, transparent 1px);
+        background-size: 66px 66px;
+        mask-image: linear-gradient(90deg, transparent, #0007);
+      }
+      .slide > * {
+        position: relative;
+        z-index: 1;
+      }
+      .eyebrow {
+        font-size: clamp(11px, 1vw, 15px);
+        letter-spacing: 0.23em;
+        color: var(--gold);
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      .slide h1 {
+        font-size: clamp(54px, 8.1vw, 130px);
+        letter-spacing: -0.065em;
+        line-height: 0.94;
+        margin: 0 0 24px;
+        max-width: 1200px;
+      }
+      .slide h2 {
+        font-size: clamp(36px, 5vw, 79px);
+        letter-spacing: -0.052em;
+        line-height: 1.04;
+        margin: 0 0 24px;
+        max-width: 1300px;
+      }
+      .slide h3 {
+        font-size: clamp(20px, 2vw, 29px);
+        margin: 0 0 12px;
+        letter-spacing: -0.025em;
+      }
+      .lead {
+        font-size: clamp(18px, 1.8vw, 26px);
+        line-height: 1.55;
+        color: #c0ccd2;
+        max-width: 950px;
+      }
+      .small {
+        font-size: clamp(13px, 1.1vw, 17px);
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .accent {
+        color: var(--gold);
+      }
+      .green {
+        color: var(--green);
+      }
+      .red {
+        color: var(--red);
+      }
+      .blue {
+        color: var(--blue);
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .panel {
+        background: #14212bcf;
+        border: 1px solid #34454f;
+        border-radius: 14px;
+        padding: clamp(18px, 2vw, 32px);
+      }
+      .panel p {
+        color: #bdcbd2;
+        line-height: 1.55;
+        margin: 8px 0 0;
+      }
+      .num {
+        font-size: clamp(48px, 5.4vw, 84px);
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        line-height: 1;
+      }
+      .rule {
+        height: 1px;
+        background: var(--line);
+        margin: 20px 0;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #4b5963;
+        border-radius: 40px;
+        padding: 8px 13px;
+        color: #cbd6dc;
+        font-size: 13px;
+      }
+      .dot {
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        background: var(--green);
+      }
+      .steps {
+        display: flex;
+        align-items: stretch;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .step {
+        flex: 1;
+        min-width: 120px;
+        border-top: 2px solid var(--gold);
+        padding: 22px 12px 8px 0;
+      }
+      .step b {
+        font-size: 19px;
+        display: block;
+      }
+      .step span {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .arrow {
+        color: var(--gold);
+        align-self: center;
+        font-size: 24px;
+      }
+      .lot {
+        background: #101d25;
+        border: 1px solid #43505a;
+        border-radius: 12px;
+        padding: 22px;
+      }
+      .lot-title {
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        color: var(--gold);
+        margin-bottom: 15px;
+      }
+      .section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-top: 1px solid #34414b;
+        padding: 12px 0;
+        font-size: 15px;
+      }
+      .bays {
+        display: flex;
+        gap: 5px;
+      }
+      .bay {
+        height: 21px;
+        width: 21px;
+        border-radius: 3px;
+        background: #2c866c;
+        border: 1px solid #6ad3ac;
+      }
+      .bay.used {
+        background: #9e4f52;
+        border-color: #ef918c;
+      }
+      .terminal {
+        background: #070c10;
+        border: 1px solid #42525b;
+        border-radius: 12px;
+        padding: 25px;
+        font-family: "Cascadia Code", Consolas, monospace;
+        font-size: clamp(12px, 1.2vw, 17px);
+        line-height: 1.65;
+        color: #c4d6d9;
+        white-space: pre-wrap;
+      }
+      .terminal .gold {
+        color: var(--gold);
+      }
+      .terminal .ok {
+        color: var(--green);
+      }
+      .terminal .bad {
+        color: var(--red);
+      }
+      .code {
+        background: #080f15;
+        border: 1px solid #394a53;
+        border-radius: 12px;
+        padding: 24px;
+        font:
+          clamp(12px, 1.13vw, 16px)/1.65 Consolas,
+          monospace;
+        white-space: pre-wrap;
+        color: #d1dfdf;
+      }
+      .big-stat {
+        font-size: clamp(45px, 5.5vw, 90px);
+        font-weight: 800;
+        letter-spacing: -0.06em;
+      }
+      .caption {
+        font-size: 13px;
+        color: #92a9b5;
+        line-height: 1.5;
+      }
+      .footer {
+        position: fixed;
+        z-index: 10;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        background: #0b1118d9;
+        border-top: 1px solid #293a45;
+        display: flex;
+        align-items: center;
+        padding: 0 34px;
+        gap: 18px;
+        backdrop-filter: blur(15px);
+      }
+      .brand {
+        font-size: 11px;
+        letter-spacing: 0.17em;
+        color: var(--gold);
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .progress {
+        height: 3px;
+        background: #293843;
+        flex: 1;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .progress > div {
+        height: 100%;
+        background: var(--gold);
+        transition: width 0.35s;
+      }
+      .ctrl {
+        background: #192934;
+        color: #f3f1e9;
+        border: 1px solid #4b5c65;
+        border-radius: 8px;
+        padding: 7px 13px;
+        cursor: pointer;
+      }
+      .ctrl:hover {
+        background: #2a404c;
+      }
+      .count {
+        font:
+          12px Consolas,
+          monospace;
+        color: var(--muted);
+      }
+      .notes {
+        position: fixed;
+        right: 22px;
+        bottom: 70px;
+        width: min(490px, 90vw);
+        max-height: 45vh;
+        overflow: auto;
+        background: #1a2832;
+        border: 1px solid #66737c;
+        border-radius: 12px;
+        padding: 20px;
+        z-index: 30;
+        box-shadow: 0 15px 40px #0008;
+        display: none;
+        color: #e4e8e8;
+        line-height: 1.6;
+      }
+      .notes.show {
+        display: block;
+      }
+      .notes strong {
+        color: var(--gold);
+      }
+      .map {
+        position: relative;
+        border: 1px solid #425560;
+        border-radius: 14px;
+        background: #101c24;
+        min-height: 350px;
+        padding: 22px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr 65px 1fr;
+        gap: 15px;
+      }
+      .building {
+        background: #243a47;
+        border: 1px solid #6a8da0;
+        border-radius: 6px;
+        padding: 15px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-align: center;
+      }
+      .road {
+        grid-column: 1/4;
+        background: repeating-linear-gradient(
+          90deg,
+          #3d515e 0 35px,
+          #9ea9ac 35px 50px,
+          #3d515e 50px 100px
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #f8f8f8;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+      }
+      .map-lot {
+        border: 1px solid #667b83;
+        border-radius: 6px;
+        padding: 12px;
+        background: #17252e;
+      }
+      .map-lot b {
+        color: var(--gold);
+        font-size: 13px;
+      }
+      .map-lot .bays {
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .map-lot .bay {
+        height: 15px;
+        width: 24px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .flow {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .flow .panel {
+        flex: 1;
+        min-width: 160px;
+      }
+      .quote {
+        font-size: clamp(28px, 3.2vw, 49px);
+        line-height: 1.2;
+        letter-spacing: -0.035em;
+        max-width: 1000px;
+      }
+      .kicker {
+        font-size: 13px;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+      }
+      .compare .panel {
+        min-height: 260px;
+      }
+      .compare ul {
+        line-height: 2;
+        color: #d1d9dc;
+        padding-left: 22px;
+      }
+      .tag {
+        font:
+          12px Consolas,
+          monospace;
+        color: var(--gold);
+        border: 1px solid #6b624e;
+        border-radius: 5px;
+        padding: 5px 8px;
+      }
+      .feature-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .feature {
+        border-left: 3px solid var(--gold);
+        padding: 11px 16px;
+        background: #17242c;
+      }
+      .feature b {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .feature span {
+        font-size: 14px;
+        color: #afc0c9;
+      }
+      .demo-controls {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+      .demo-controls button {
+        background: #223946;
+        color: #fff;
+        border: 1px solid #66808a;
+        border-radius: 7px;
+        padding: 10px 15px;
+        cursor: pointer;
+      }
+      .demo-controls button:hover {
+        background: #385769;
+      }
+      .slide.active .reveal {
+        animation: rise 0.6s both;
+      }
+      .slide.active .reveal:nth-child(2) {
+        animation-delay: 0.09s;
+      }
+      .slide.active .reveal:nth-child(3) {
+        animation-delay: 0.17s;
+      }
+      .slide.active .reveal:nth-child(4) {
+        animation-delay: 0.25s;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (max-width: 850px) {
+        .slide {
+          padding: 55px 25px 75px;
+          justify-content: flex-start;
+        }
+        .grid2,
+        .grid3,
+        .compare {
+          grid-template-columns: 1fr;
+        }
+        .slide h1 {
+          font-size: 54px;
+        }
+        .slide h2 {
+          font-size: 42px;
+        }
+        .map {
+          min-height: 310px;
+        }
+        .feature-list {
+          grid-template-columns: 1fr;
+        }
+        .footer {
+          padding: 0 12px;
+          gap: 8px;
+        }
+        .brand {
+          font-size: 9px;
+        }
+        .step {
+          min-width: 100px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .slide,
+        .progress > div {
+          transition: none;
+        }
+        .slide.active .reveal {
+          animation: none;
+        }
+      }
+      @media print {
+        body {
+          overflow: visible;
+          background: white;
+        }
+        .slide {
+          position: relative;
+          height: 100vh;
+          page-break-after: always;
+          opacity: 1;
+          transform: none;
+          pointer-events: auto;
+        }
+        .footer,
+        .notes {
+          display: none;
+        }
+      }
+
+      /* SINISTER THREE — editorial systems design / 2026 */
+      :root {
+        --bg: #f5f4f0;
+        --panel: #ffffff;
+        --line: #d8d9d6;
+        --muted: #697078;
+        --text: #141a22;
+        --gold: #3657e8;
+        --green: #16866c;
+        --red: #c84f49;
+        --blue: #3657e8;
+        --ink: #141a22;
+        --paper: #f5f4f0;
+      }
+      html,
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Arial Nova", "Aptos", "Helvetica Neue", Arial, sans-serif;
+      }
+      #deck {
+        background: var(--paper);
+        isolation: isolate;
+      }
+      #deck:before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background:
+          linear-gradient(90deg, rgba(35, 55, 80, 0.028) 1px, transparent 1px),
+          linear-gradient(rgba(35, 55, 80, 0.028) 1px, transparent 1px);
+        background-size: 72px 72px;
+      }
+      .slide {
+        padding: clamp(34px, 5.3vw, 92px) clamp(40px, 7vw, 126px) 90px;
+        justify-content: center;
+        transform: translate3d(42px, 0, 0) scale(0.986);
+        filter: blur(5px);
+        transition:
+          opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+          filter 0.6s ease;
+        overflow: auto;
+        will-change: transform, opacity;
+      }
+      .slide.active {
+        transform: none;
+        filter: blur(0);
+      }
+      .slide:before {
+        background: none;
+      }
+      .slide:after {
+        content: attr(data-index);
+        position: absolute;
+        right: 6.7vw;
+        top: 5.3vh;
+        color: #9fa6af;
+        font:
+          600 12px/1 "Consolas",
+          monospace;
+        letter-spacing: 0.12em;
+      }
+      .slide h1,
+      .slide h2 {
+        font-family: "Arial Nova", "Helvetica Neue", Arial, sans-serif;
+        color: #121820;
+        font-weight: 800;
+        text-wrap: balance;
+      }
+      .slide h1 {
+        font-size: clamp(60px, 8.7vw, 146px);
+        letter-spacing: -0.085em;
+        line-height: 0.94;
+      }
+      .slide h2 {
+        font-size: clamp(44px, 5.35vw, 86px);
+        letter-spacing: -0.074em;
+        line-height: 1.02;
+        max-width: 1200px;
+      }
+      .slide h3 {
+        font-weight: 760;
+        color: #141b26;
+      }
+      .eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        font-weight: 800;
+        color: #3657e8;
+        margin-bottom: 26px;
+      }
+      .lead {
+        color: #4f5964;
+        font-size: clamp(20px, 1.9vw, 29px);
+        line-height: 1.46;
+      }
+      .small,
+      .caption,
+      .muted {
+        color: #68727b;
+      }
+      .accent,
+      .blue {
+        color: #3657e8;
+      }
+      .green {
+        color: #16866c;
+      }
+      .red {
+        color: #c84f49;
+      }
+      .panel,
+      .lot,
+      .map-lot {
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid #dadddf;
+        border-radius: 6px;
+        box-shadow: 0 8px 32px rgba(20, 30, 45, 0.035);
+        padding: clamp(20px, 2.1vw, 34px);
+      }
+      .panel p {
+        color: #55616a;
+      }
+      .rule {
+        background: #d3d6d9;
+        margin: 25px 0;
+      }
+      .num,
+      .big-stat {
+        color: #151d2b;
+        font-weight: 850;
+        font-variant-numeric: tabular-nums;
+      }
+      .pill,
+      .tag {
+        border: 1px solid #c8cfe2;
+        color: #3657e8;
+        background: #f3f5ff;
+        border-radius: 3px;
+      }
+      .step {
+        border-top: 3px solid #3657e8;
+        padding-top: 26px;
+      }
+      .step b {
+        color: #17212c;
+      }
+      .step span {
+        color: #68727b;
+      }
+      .arrow {
+        color: #3657e8;
+      }
+      .lot {
+        background: #fff;
+      }
+      .lot-title {
+        color: #3657e8;
+      }
+      .section {
+        border-color: #e0e4e7;
+        color: #25313d;
+      }
+      .bay {
+        background: #bfe6d9;
+        border: 1px solid #15836a;
+        border-radius: 2px;
+      }
+      .bay.used {
+        background: #f0c7c4;
+        border-color: #bc4a44;
+      }
+      .terminal,
+      .code {
+        background: #151c29;
+        border: 1px solid #283449;
+        color: #dfe6f1;
+        border-radius: 7px;
+        box-shadow: 0 22px 48px rgba(15, 25, 45, 0.12);
+      }
+      .terminal .gold {
+        color: #9caeff;
+      }
+      .terminal .ok {
+        color: #70d6ad;
+      }
+      .terminal .bad {
+        color: #ff9e94;
+      }
+      .footer {
+        height: 62px;
+        background: rgba(250, 250, 248, 0.95);
+        border-top: 1px solid #dadddf;
+        padding: 0 34px;
+        backdrop-filter: blur(18px);
+      }
+      .brand {
+        color: #17212c;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+      }
+      .progress {
+        background: #dce0e4;
+        height: 2px;
+      }
+      .progress > div {
+        background: #3657e8;
+      }
+      .count {
+        color: #68727b;
+      }
+      .ctrl {
+        background: #fff;
+        color: #263346;
+        border: 1px solid #d3d9df;
+        border-radius: 5px;
+        padding: 8px 13px;
+        transition:
+          background 0.2s,
+          transform 0.2s,
+          border-color 0.2s;
+      }
+      .ctrl:hover {
+        background: #e9edff;
+        border-color: #8b9ff1;
+        transform: translateY(-2px);
+      }
+      .notes {
+        background: #fff;
+        color: #273342;
+        border: 1px solid #d8dfe5;
+        border-radius: 7px;
+        box-shadow: 0 20px 70px #1c2b4422;
+      }
+      .notes strong {
+        color: #3657e8;
+      }
+      .map {
+        background: #e9efed;
+        border: 1px solid #c7d3d0;
+        border-radius: 6px;
+        min-height: 350px;
+      }
+      .building {
+        background: #e0e8f5;
+        color: #29416a;
+        border: 1px solid #98b1d4;
+        border-radius: 3px;
+      }
+      .road {
+        background: repeating-linear-gradient(
+          90deg,
+          #b7bec7 0 35px,
+          #f7f6ee 35px 49px,
+          #b7bec7 49px 100px
+        );
+        color: #1b2636;
+      }
+      .map-lot {
+        background: #fff;
+      }
+      .map-lot b {
+        color: #3657e8;
+      }
+      .quote {
+        color: #1c2633;
+      }
+      .kicker {
+        color: #68727b;
+      }
+      .feature {
+        background: #fff;
+        border: 1px solid #e0e4e7;
+        border-left: 3px solid #3657e8;
+        border-radius: 2px;
+      }
+      .feature span {
+        color: #5c6772;
+      }
+      .compare .panel ul {
+        color: #384451;
+      }
+      .demo-controls button {
+        background: #3657e8;
+        border: 1px solid #3657e8;
+        color: white;
+        border-radius: 4px;
+        padding: 12px 17px;
+        transition:
+          transform 0.2s,
+          background 0.2s;
+      }
+      .demo-controls button:hover {
+        background: #1f3fc7;
+        transform: translateY(-2px);
+      }
+      .slide.active .reveal {
+        animation: editorialRise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .slide.active .reveal:nth-child(2) {
+        animation-delay: 0.12s;
+      }
+      .slide.active .reveal:nth-child(3) {
+        animation-delay: 0.24s;
+      }
+      .slide.active .reveal:nth-child(4) {
+        animation-delay: 0.36s;
+      }
+      @keyframes editorialRise {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 28px, 0);
+          filter: blur(5px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+          filter: blur(0);
+        }
+      }
+      /* Stagger all major blocks, not just hand-labelled reveals */
+      .slide.active > .grid2,
+      .slide.active > .grid3,
+      .slide.active > .compare,
+      .slide.active > .steps,
+      .slide.active > .feature-list,
+      .slide.active > .map,
+      .slide.active > .terminal,
+      .slide.active > .code,
+      .slide.active > .flow {
+        animation: editorialRise 0.85s 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .slide.active .grid3 > .panel,
+      .slide.active .grid3 > .lot,
+      .slide.active .grid2 > .panel,
+      .slide.active .grid2 > .lot,
+      .slide.active .feature-list > .feature,
+      .slide.active .steps > .step {
+        animation: editorialRise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .slide.active .grid3 > :nth-child(1),
+      .slide.active .grid2 > :nth-child(1),
+      .slide.active .feature-list > :nth-child(1),
+      .slide.active .steps > :nth-child(1) {
+        animation-delay: 0.13s;
+      }
+      .slide.active .grid3 > :nth-child(2),
+      .slide.active .grid2 > :nth-child(2),
+      .slide.active .feature-list > :nth-child(2),
+      .slide.active .steps > :nth-child(2) {
+        animation-delay: 0.23s;
+      }
+      .slide.active .grid3 > :nth-child(3),
+      .slide.active .feature-list > :nth-child(3),
+      .slide.active .steps > :nth-child(3) {
+        animation-delay: 0.33s;
+      }
+      .slide.active .feature-list > :nth-child(n + 4),
+      .slide.active .steps > :nth-child(n + 4) {
+        animation-delay: 0.43s;
+      }
+      /* Editorial opening and ending, deliberate inversion */
+      .slide:first-child,
+      .slide:last-child {
+        background: #141c2b;
+        color: #fff;
+      }
+      .slide:first-child h1,
+      .slide:last-child h1 {
+        color: #fff;
+      }
+      .slide:first-child .lead,
+      .slide:last-child .lead {
+        color: #c4cedb;
+      }
+      .slide:first-child .small,
+      .slide:last-child .small {
+        color: #a3b1c4;
+      }
+      .slide:first-child .eyebrow,
+      .slide:last-child .eyebrow {
+        color: #aebeff;
+      }
+      .slide:first-child .accent,
+      .slide:last-child .accent {
+        color: #9ab0ff;
+      }
+      .slide:first-child:before,
+      .slide:last-child:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          repeating-linear-gradient(
+            90deg,
+            transparent 0 84px,
+            #ffffff0b 84px 85px
+          ),
+          linear-gradient(145deg, #141c2b, #202f52);
+        mask-image: none;
+        pointer-events: none;
+      }
+      .slide:first-child:after,
+      .slide:last-child:after {
+        color: #a8b8d5;
+      }
+      .slide:first-child h1,
+      .slide:last-child h1 {
+        animation: none;
+      }
+      .slide.active:first-child h1,
+      .slide.active:last-child h1 {
+        animation: titleIn 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      @keyframes titleIn {
+        from {
+          opacity: 0;
+          transform: translateY(50px) skewY(2deg);
+          filter: blur(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+          filter: blur(0);
+        }
+      }
+      /* Motion-rich parking visualization */
+      .slide.active .bay {
+        animation: bayReveal 0.45s ease both;
+      }
+      .slide.active .bay:nth-child(3n + 1) {
+        animation-delay: 0.25s;
+      }
+      .slide.active .bay:nth-child(3n + 2) {
+        animation-delay: 0.38s;
+      }
+      .slide.active .bay:nth-child(3n) {
+        animation-delay: 0.51s;
+      }
+      @keyframes bayReveal {
+        from {
+          opacity: 0.15;
+          transform: scaleY(0.2);
+        }
+        to {
+          opacity: 1;
+          transform: scaleY(1);
+        }
+      }
+      .slide.active .road {
+        background-size: 100px 100%;
+        animation: roadMove 3.5s linear infinite;
+      }
+      @keyframes roadMove {
+        to {
+          background-position: 100px 0;
+        }
+      }
+      .slide.active .flow .panel {
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+      .slide.active .flow .panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 30px #1c2b4420;
+      }
+      /* Timeline and optional presentation overview */
+      #overview {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: #f5f4f0f5;
+        backdrop-filter: blur(20px);
+        padding: 5vh 5vw;
+        overflow: auto;
+        display: none;
+      }
+      #overview.show {
+        display: block;
+      }
+      #overview h2 {
+        font-size: clamp(28px, 3vw, 48px);
+        letter-spacing: -0.06em;
+        margin: 0 0 22px;
+      }
+      #overviewGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .overview-card {
+        background: white;
+        border: 1px solid #d8dce1;
+        text-align: left;
+        border-radius: 5px;
+        padding: 19px;
+        min-height: 100px;
+        cursor: pointer;
+        color: #17212c;
+        transition:
+          transform 0.2s,
+          border-color 0.2s;
+      }
+      .overview-card:hover {
+        transform: translateY(-3px);
+        border-color: #3657e8;
+      }
+      .overview-card small {
+        display: block;
+        color: #3657e8;
+        font:
+          700 11px Consolas,
+          monospace;
+        margin-bottom: 10px;
+      }
+      .overview-card strong {
+        font-size: 17px;
+        line-height: 1.2;
+      }
+      #overviewClose {
+        float: right;
+        border: 1px solid #cdd3dc;
+        background: #fff;
+        padding: 10px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      @media (max-width: 850px) {
+        .slide {
+          padding: 52px 24px 82px;
+        }
+        .slide h1 {
+          font-size: clamp(48px, 12vw, 76px);
+        }
+        .slide h2 {
+          font-size: clamp(35px, 8vw, 52px);
+        }
+        .panel,
+        .lot {
+          padding: 18px;
+        }
+        .grid2,
+        .grid3,
+        .compare {
+          grid-template-columns: 1fr;
+        }
+        .footer {
+          padding: 0 12px;
+          gap: 7px;
+        }
+        .slide:after {
+          right: 24px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .slide,
+        .slide.active .reveal,
+        .slide.active .road,
+        .slide.active .bay,
+        .slide.active .grid3 > *,
+        .slide.active .grid2 > *,
+        .slide.active .feature-list > *,
+        .slide.active .steps > *,
+        .slide.active h1,
+        .slide.active > .map,
+        .slide.active > .terminal,
+        .slide.active > .code,
+        .slide.active > .flow {
+          animation: none !important;
+          transition: none !important;
+          filter: none !important;
+        }
+      }
+      @media print {
+        .slide {
+          background: #fff !important;
+          color: #141a22 !important;
+        }
+        .slide h1,
+        .slide h2 {
+          color: #141a22 !important;
+        }
+        .slide:before {
+          display: none !important;
+        }
+        #overview {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="deck">
+      <section
+        class="slide active"
+        data-index="01 / 18"
+        data-notes="Open by explaining that parking is an allocation and record-keeping problem, not merely a shortage of physical space. This is a C console prototype, not a sensor-equipped deployment."
+      >
+        <div class="eyebrow reveal">Sinister Three / Hackathon Project</div>
+        <h1 class="reveal">
+          EVERY SPACE.<br /><span class="accent">ACCOUNTED FOR.</span>
+        </h1>
+        <p class="lead reveal">
+          Smart Campus Parking Management System<br />Built in C. Designed for
+          orderly campus mobility.
+        </p>
+        <div class="reveal">
+          <span class="pill"
+            ><span class="dot"></span> A working console-based prototype</span
+          >
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="02 / 18"
+        data-notes="The problem statement is qualitative. We have not measured congestion or search times, so do not cite invented savings."
+      >
+        <div class="eyebrow">01 / The problem</div>
+        <h2>
+          Parking becomes chaotic<br />when
+          <span class="accent">information is missing.</span>
+        </h2>
+        <div class="grid3">
+          <div class="panel reveal">
+            <h3>Uncertain capacity</h3>
+            <p>
+              Drivers cannot easily tell which designated spaces remain
+              available.
+            </p>
+          </div>
+          <div class="panel reveal">
+            <h3>Manual records</h3>
+            <p>
+              Entry, exit and vehicle details become harder to maintain
+              consistently.
+            </p>
+          </div>
+          <div class="panel reveal">
+            <h3>Inconsistent charging</h3>
+            <p>
+              Visitor parking requires reliable duration tracking and a clear
+              tariff.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="03 / 18"
+        data-notes="Our software does not claim to eliminate physical congestion. It supplies the record and allocation logic that could support a managed parking operation."
+      >
+        <div class="eyebrow">02 / Why the problem matters</div>
+        <h2>
+          One campus.<br /><span class="accent">Different parking needs.</span>
+        </h2>
+        <div class="grid3">
+          <div class="panel">
+            <div class="big-stat">01</div>
+            <h3>Students</h3>
+            <p>Institutional identification and free parking.</p>
+          </div>
+          <div class="panel">
+            <div class="big-stat">02</div>
+            <h3>Staff</h3>
+            <p>Separate eligibility and free parking.</p>
+          </div>
+          <div class="panel">
+            <div class="big-stat">03</div>
+            <h3>Visitors</h3>
+            <p>Simple registration and time-based charging.</p>
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="04 / 18"
+        data-notes="The system is a deterministic allocation engine. It does not use machine learning, sensors or automatic number-plate recognition."
+      >
+        <div class="eyebrow">03 / Our answer</div>
+        <h2>
+          A small system with<br /><span class="accent"
+            >a complete lifecycle.</span
+          >
+        </h2>
+        <div class="steps">
+          <div class="step">
+            <b>01 Register</b
+            ><span>Identify the owner, category and vehicle.</span>
+          </div>
+          <div class="step">
+            <b>02 Enter</b><span>Find a compatible available bay.</span>
+          </div>
+          <div class="step">
+            <b>03 Record</b><span>Store the active parking session.</span>
+          </div>
+          <div class="step">
+            <b>04 Exit</b><span>Calculate charges and free the bay.</span>
+          </div>
+          <div class="step">
+            <b>05 Persist</b><span>Save records to binary storage.</span>
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="05 / 18"
+        data-notes="The uploaded repository models three owner sections and three vehicle types. Its default 45 slots are split into nine pools, five per pool. The labels here are explanatory, not necessarily the exact terminal output."
+      >
+        <div class="eyebrow">04 / System architecture</div>
+        <h2>
+          <span class="accent">3</span> parking lots.
+          <span class="accent">9</span> dedicated sections.
+        </h2>
+        <div class="grid3">
+          <div class="lot">
+            <div class="lot-title">A / STUDENT</div>
+            <div class="section">
+              Cars
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+            <div class="section">
+              Motorcycles
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+            <div class="section">
+              Bicycles
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+          </div>
+          <div class="lot">
+            <div class="lot-title">B / STAFF</div>
+            <div class="section">
+              Cars
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+            <div class="section">
+              Motorcycles
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+            <div class="section">
+              Bicycles
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+          </div>
+          <div class="lot">
+            <div class="lot-title">C / VISITOR</div>
+            <div class="section">
+              Cars
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+            <div class="section">
+              Motorcycles
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+            <div class="section">
+              Bicycles
+              <span class="bays"
+                ><i class="bay"></i><i class="bay"></i><i class="bay"></i
+                ><i class="bay"></i><i class="bay"></i
+              ></span>
+            </div>
+          </div>
+        </div>
+        <p class="small">
+          Default configuration: 45 bays, five in each category × vehicle-type
+          pool. Capacities are configurable within the programme's constraints.
+        </p>
+      </section>
+      <section
+        class="slide"
+        data-index="06 / 18"
+        data-notes="Registration in the uploaded source requires a student SAP ID, a nine-digit staff/teacher ID, or visitor details. Number plates are normalised and validated. Bicycles have a separate identification workflow in the implementation examined."
+      >
+        <div class="eyebrow">05 / Registration</div>
+        <h2>
+          Identity first.<br /><span class="accent">Allocation second.</span>
+        </h2>
+        <div class="grid3">
+          <div class="panel">
+            <span class="tag">STUDENT</span>
+            <h3 style="margin-top: 22px">Campus ID + owner</h3>
+            <p>SAP ID, name, vehicle details and category validation.</p>
+          </div>
+          <div class="panel">
+            <span class="tag">STAFF</span>
+            <h3 style="margin-top: 22px">Staff ID + owner</h3>
+            <p>
+              Institutional identification with category-specific uniqueness
+              checks.
+            </p>
+          </div>
+          <div class="panel">
+            <span class="tag">VISITOR</span>
+            <h3 style="margin-top: 22px">Visitor details</h3>
+            <p>
+              Name and vehicle identification; no institutional ID required.
+            </p>
+          </div>
+        </div>
+        <p class="small">
+          Registration numbers are normalised; duplicate vehicle registrations
+          are rejected.
+        </p>
+      </section>
+      <section
+        class="slide"
+        data-index="07 / 18"
+        data-notes="This is a first-available compatible-slot algorithm, not a shortest-path optimisation. It checks both owner category and vehicle type."
+      >
+        <div class="eyebrow">06 / Allocation logic</div>
+        <h2>Not random.<br /><span class="accent">Rule-based.</span></h2>
+        <div class="flow">
+          <div class="panel">
+            <div class="kicker">Input</div>
+            <h3>Student</h3>
+            <p>Vehicle type: Car</p>
+          </div>
+          <span class="arrow">→</span>
+          <div class="panel">
+            <div class="kicker">Eligibility</div>
+            <h3>Student × Car</h3>
+            <p>Only compatible section</p>
+          </div>
+          <span class="arrow">→</span>
+          <div class="panel">
+            <div class="kicker">Allocation</div>
+            <h3 class="green">First free bay</h3>
+            <p>Mark occupied; open session</p>
+          </div>
+        </div>
+        <p class="lead" style="margin-top: 35px">
+          The engine rejects duplicate active entries and returns a
+          full-capacity result when no eligible bay remains.
+        </p>
+      </section>
+      <section
+        class="slide"
+        data-index="08 / 18"
+        data-notes="This diagram is a conceptual map, not a screenshot of the running application. The provided repository snapshot predates the later map branch; do not describe it as verified implemented functionality."
+      >
+        <div class="eyebrow">
+          07 / Campus geography — conceptual illustration
+        </div>
+        <h2>A campus with <span class="accent">clear destinations.</span></h2>
+        <div class="map">
+          <div class="building">
+            ACADEMIC COMPLEX<br /><span class="muted"
+              >Teaching &amp; research</span
+            >
+          </div>
+          <div class="building">
+            CENTRAL LIBRARY<br /><span class="muted">Study precinct</span>
+          </div>
+          <div class="building">
+            ADMINISTRATION<br /><span class="muted">Staff precinct</span>
+          </div>
+          <div class="road">CAMPUS BOULEVARD</div>
+          <div class="map-lot">
+            <b>A / STUDENT PARKING</b>
+            <div class="bays" id="mapA"></div>
+          </div>
+          <div class="map-lot">
+            <b>B / STAFF PARKING</b>
+            <div class="bays" id="mapB"></div>
+          </div>
+          <div class="map-lot">
+            <b>C / VISITOR PARKING</b>
+            <div class="bays" id="mapC"></div>
+          </div>
+        </div>
+        <p class="caption">
+          Illustrative spatial plan. The verified parking data model contains
+          three owner sections and nine vehicle-type pools; this diagram does
+          not claim to reproduce a live terminal map.
+        </p>
+      </section>
+      <section
+        class="slide"
+        data-index="09 / 18"
+        data-notes="This is a self-contained interactive illustration of the allocation rules, not the live C executable. The real program maintains the authoritative data. Use the buttons to demonstrate the principle."
+      >
+        <div class="eyebrow">08 / Interactive demonstration</div>
+        <h2>Watch occupancy <span class="accent">change.</span></h2>
+        <div class="grid2">
+          <div class="panel">
+            <div class="kicker">Illustrative visitor car pool</div>
+            <h3 style="margin-top: 14px">Five available bays</h3>
+            <div
+              class="bays"
+              id="demoBays"
+              style="margin: 28px 0; gap: 12px"
+            ></div>
+            <p class="small" id="demoStatus">No active demo vehicles.</p>
+            <div class="demo-controls">
+              <button onclick="demoEnter()">Simulate entry</button
+              ><button onclick="demoExit()">Simulate exit</button
+              ><button onclick="demoReset()">Reset</button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="kicker">What the C application does</div>
+            <div class="feature-list" style="margin-top: 18px">
+              <div class="feature">
+                <b>Find</b><span>Search the matching pool</span>
+              </div>
+              <div class="feature">
+                <b>Allocate</b><span>Choose a free slot</span>
+              </div>
+              <div class="feature">
+                <b>Record</b><span>Create a timed session</span>
+              </div>
+              <div class="feature">
+                <b>Release</b><span>Close session on exit</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="10 / 18"
+        data-notes="The repository's menu is a conventional console interface. This is a faithful text reconstruction of the verified README menu, not a photograph or terminal screenshot."
+      >
+        <div class="eyebrow">09 / User experience</div>
+        <h2>
+          One menu.<br /><span class="accent">One clear action at a time.</span>
+        </h2>
+        <div class="grid2">
+          <div class="terminal">
+            <span class="gold">SMART CAMPUS PARKING SYSTEM</span>
+            ───────────────────────────── 1. Register Vehicle 2. Vehicle Entry
+            3. Vehicle Exit 4. Parking Status 5. Search Vehicle 6. Statistics 0.
+            Exit
+
+            <span class="ok">Select an option: _</span>
+          </div>
+          <div class="panel">
+            <h3>Predictable interaction</h3>
+            <p>
+              Choose an action, complete the prompts, read the result, press
+              Enter, and return to a cleared main menu.
+            </p>
+            <div class="rule"></div>
+            <h3>Defensive input handling</h3>
+            <p>
+              Bounded text input, numeric validation and explicit error
+              statuses.
+            </p>
+            <p class="caption" style="margin-top: 22px">
+              Reconstructed from the uploaded source version; not a live
+              screenshot.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="11 / 18"
+        data-notes="Time is measured from entry to exit using C time facilities. The default visitor tariff is twenty rupees for every started hour; students and staff are free. This is a policy demonstration, not an external payment gateway."
+      >
+        <div class="eyebrow">10 / Billing policy</div>
+        <h2>
+          Simple rules.<br /><span class="accent">Predictable charges.</span>
+        </h2>
+        <div class="grid3">
+          <div class="panel">
+            <div class="kicker">Students</div>
+            <div class="big-stat green">₹0</div>
+            <p>Free parking</p>
+          </div>
+          <div class="panel">
+            <div class="kicker">Staff</div>
+            <div class="big-stat green">₹0</div>
+            <p>Free parking</p>
+          </div>
+          <div class="panel">
+            <div class="kicker">Visitors</div>
+            <div class="big-stat accent">₹20</div>
+            <p>Per started hour</p>
+          </div>
+        </div>
+        <p class="lead">
+          Example: 10:00 entry → 11:30 exit = 90 minutes →
+          <b class="accent">₹40</b>.
+        </p>
+      </section>
+      <section
+        class="slide"
+        data-index="12 / 18"
+        data-notes="The exit function finds the active session, computes duration and charge, records the completed session, releases the occupied slot, and fills a receipt. The uploaded source snapshot treats zero or backwards durations as zero charge; this is a limitation rather than desirable behaviour."
+      >
+        <div class="eyebrow">11 / Vehicle exit</div>
+        <h2>
+          Exit is more than<br /><span class="accent">opening a gate.</span>
+        </h2>
+        <div class="grid2">
+          <div class="terminal">
+            <span class="gold">PARKING RECEIPT</span>
+            ──────────────────────────── Category VISITOR Vehicle CAR Entry
+            10:00 Exit 11:30 Duration 1 h 30 min Rate Rs. 20 / hour
+            <span class="ok">Total Rs. 40</span>
+            ────────────────────────────
+            <span class="ok">Slot released</span>
+          </div>
+          <div class="panel">
+            <h3>What changes internally?</h3>
+            <p>1. Find the active parking session.</p>
+            <p>2. Calculate the elapsed duration.</p>
+            <p>3. Apply the category tariff.</p>
+            <p>4. Store the completed visit and charge.</p>
+            <p>5. Release the exact occupied bay.</p>
+            <p class="caption">
+              Illustrative receipt with a known tariff example, not an actual
+              transaction record.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="13 / 18"
+        data-notes="The uploaded README explicitly states this version saves on exit, rather than after each action. It uses a versioned binary format and a temporary-file replacement strategy. If a newer local branch implements autosave, verify before updating the slide."
+      >
+        <div class="eyebrow">12 / Persistent records</div>
+        <h2>
+          Closing the programme<br /><span class="accent"
+            >doesn't erase the history.</span
+          >
+        </h2>
+        <div class="grid2">
+          <div class="panel">
+            <div class="kicker">In-memory state</div>
+            <h3>Vehicles · Slots · Sessions</h3>
+            <p>
+              Dynamic arrays hold registrations, current occupancy and completed
+              parking visits.
+            </p>
+            <div class="rule"></div>
+            <h3>Binary `.dat` file</h3>
+            <p>
+              Versioned header, fixed-width fields, stable IDs and no raw
+              pointers.
+            </p>
+          </div>
+          <div class="panel">
+            <div class="kicker">Recovery design</div>
+            <h3>Validate before accepting</h3>
+            <p>
+              Loading checks record counts, types, references and consistency
+              before replacing the current state.
+            </p>
+            <div class="rule"></div>
+            <h3>Write safely</h3>
+            <p>
+              Save to a temporary file and replace the target only after
+              successful writing.
+            </p>
+          </div>
+        </div>
+        <p class="small">
+          Verified uploaded version: records are saved on normal exit; a crash
+          before saving may lose recent in-memory changes.
+        </p>
+      </section>
+      <section
+        class="slide"
+        data-index="14 / 18"
+        data-notes="This is the software structure in the uploaded repository. The files are main.c, parking.c, registration.c, storage.c, and two public headers. The test suite is separate."
+      >
+        <div class="eyebrow">13 / Software architecture</div>
+        <h2>
+          Small modules.<br /><span class="accent"
+            >Clear responsibilities.</span
+          >
+        </h2>
+        <div class="grid2">
+          <div class="code">
+            <span class="accent">Codes/</span>
+            main.c // menus + input parking.c // rules + sessions registration.c
+            // input validation storage.c // binary persistence
+
+            <span class="accent">Header Files/</span>
+            parking.h // types + API registration.h // validation API
+
+            <span class="accent">tests/</span>
+            test_parking_system.c
+          </div>
+          <div class="panel">
+            <h3>Separation of concerns</h3>
+            <p>
+              Console interaction does not need to know the binary file layout.
+              Storage does not decide who is eligible to park. Parking logic
+              owns allocation and billing.
+            </p>
+            <div class="rule"></div>
+            <p class="small">
+              Multiple translation units compile and link into one executable
+              through the Makefile.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="15 / 18"
+        data-notes="Discuss how these concepts are applied rather than listing syntax. Dynamic arrays grow when needed; enums constrain categories; time.h handles durations; binary I/O reconstructs records. Do not claim artificial use of extern globals."
+      >
+        <div class="eyebrow">14 / Engineering in C</div>
+        <h2>
+          Fundamentals used<br /><span class="accent">for real reasons.</span>
+        </h2>
+        <div class="grid3">
+          <div class="panel">
+            <h3>Structures + enums</h3>
+            <p>
+              Represent vehicles, parking bays, sessions, categories and status
+              codes.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Dynamic memory</h3>
+            <p>
+              <code>calloc</code>, <code>realloc</code> and
+              <code>free</code> support growing records and cleanup.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>File handling</h3>
+            <p>
+              <code>fopen</code>, <code>fread</code>, <code>fwrite</code> and
+              <code>rename</code> preserve state.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Time calculations</h3>
+            <p>
+              <code>time_t</code> and elapsed-time arithmetic determine parking
+              duration.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>String handling</h3>
+            <p>
+              Validation, normalisation, duplicate checks and bounded input.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Modular compilation</h3>
+            <p>Headers declare APIs; linked C files provide implementations.</p>
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="16 / 18"
+        data-notes="Tests validate specific scenarios, not universal correctness. The source snapshot has a test suite and a Makefile target. Do not invent a test count for a newer branch."
+      >
+        <div class="eyebrow">15 / Reliability</div>
+        <h2>
+          Correctness is a feature.<br /><span class="accent"
+            >Not an afterthought.</span
+          >
+        </h2>
+        <div class="feature-list">
+          <div class="feature">
+            <b>Duplicate prevention</b
+            ><span>No duplicate registration or active parking session.</span>
+          </div>
+          <div class="feature">
+            <b>Capacity checks</b
+            ><span>No second vehicle in an occupied bay.</span>
+          </div>
+          <div class="feature">
+            <b>Memory checks</b
+            ><span>Bounded allocation growth and cleanup paths.</span>
+          </div>
+          <div class="feature">
+            <b>Persistence validation</b
+            ><span>Reject inconsistent or corrupted binary records.</span>
+          </div>
+          <div class="feature">
+            <b>Regression testing</b
+            ><span
+              >Registration, billing, entry/exit, restart and failure
+              cases.</span
+            >
+          </div>
+          <div class="feature">
+            <b>Explicit limitations</b
+            ><span
+              >A software prototype, not a physical parking-control
+              installation.</span
+            >
+          </div>
+        </div>
+      </section>
+      <section
+        class="slide"
+        data-index="17 / 18"
+        data-notes="Frame these as expected operational benefits, not measured outcomes. The application can provide a foundation for later hardware or web integration, but those features are not currently built."
+      >
+        <div class="eyebrow">16 / Real-world relevance</div>
+        <h2>
+          From an academic prototype<br />to
+          <span class="accent">practical operations.</span>
+        </h2>
+        <div class="compare">
+          <div class="panel">
+            <div class="kicker red">Without structured management</div>
+            <ul>
+              <li>Unclear bay availability</li>
+              <li>Manual visitor-duration tracking</li>
+              <li>Scattered vehicle records</li>
+              <li>Inconsistent category allocation</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="kicker green">With this software</div>
+            <ul>
+              <li>Explicit occupancy and capacity</li>
+              <li>Rule-based slot assignment</li>
+              <li>Consistent visitor tariffs</li>
+              <li>Persistent, searchable records</li>
+            </ul>
+          </div>
+        </div>
+        <p class="small">
+          These are functional benefits of the software design, not measured
+          reductions in congestion or operating costs.
+        </p>
+      </section>
+      <section
+        class="slide"
+        data-index="18 / 18"
+        data-notes="Conclude with the distinction between a manageable system and a deployed smart campus. The team has implemented core C software behaviour and identified realistic future extensions."
+      >
+        <div class="eyebrow">Sinister Three / Closing</div>
+        <h1>LESS GUESSWORK.<br /><span class="accent">MORE ORDER.</span></h1>
+        <p class="lead">
+          Three user categories. Nine parking pools. One coherent system for
+          registration, allocation, billing and records.
+        </p>
+        <div class="rule" style="max-width: 700px"></div>
+        <p class="small" style="letter-spacing: 0.16em">
+          SMART CAMPUS PARKING MANAGEMENT SYSTEM · BUILT IN C
+        </p>
+      </section>
+    </div>
+    <div class="footer">
+      <div class="brand">SINISTER THREE</div>
+      <div class="progress"><div id="bar"></div></div>
+      <div class="count" id="count">01 / 18</div>
+      <button
+        class="ctrl"
+        onclick="toggleOverview()"
+        title="Slide overview (O)"
+      >
+        Overview</button
+      ><button
+        class="ctrl"
+        onclick="toggleNotes()"
+        title="Toggle speaker notes (N)"
+      >
+        Notes</button
+      ><button class="ctrl" onclick="go(-1)" title="Previous slide">←</button
+      ><button class="ctrl" onclick="go(1)" title="Next slide">→</button
+      ><button
+        class="ctrl"
+        onclick="document.documentElement.requestFullscreen?.()"
+        title="Fullscreen (F)"
+      >
+        ⛶
+      </button>
+    </div>
+    <aside class="notes" id="notes"></aside>
+    <div
+      aria-label="Slide overview"
+      aria-modal="true"
+      id="overview"
+      role="dialog"
+    >
+      <button id="overviewClose" onclick="toggleOverview()">
+        Close overview ×
+      </button>
+      <div class="eyebrow">SINISTER THREE / SLIDE INDEX</div>
+      <h2>Presentation overview.</h2>
+      <div id="overviewGrid"></div>
+    </div>
+    <script>
+      const slides = [...document.querySelectorAll(".slide")];
+      let current = 0;
+      function render() {
+        slides.forEach((s, i) => s.classList.toggle("active", i === current));
+        document.getElementById("bar").style.width =
+          ((current + 1) / slides.length) * 100 + "%";
+        document.getElementById("count").textContent =
+          String(current + 1).padStart(2, "0") + " / " + slides.length;
+        document.getElementById("notes").innerHTML =
+          "<strong>Speaker notes</strong><p>" +
+          slides[current].dataset.notes +
+          "</p>";
+      }
+      function go(n) {
+        current = Math.min(slides.length - 1, Math.max(0, current + n));
+        render();
+      }
+      function toggleNotes() {
+        document.getElementById("notes").classList.toggle("show");
+        render();
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "BUTTON") return;
+        if (["ArrowRight", "PageDown", " "].includes(e.key)) {
+          e.preventDefault();
+          go(1);
+        } else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) {
+          e.preventDefault();
+          go(-1);
+        } else if (e.key.toLowerCase() === "n") toggleNotes();
+        else if (e.key.toLowerCase() === "f")
+          document.documentElement.requestFullscreen?.();
+        else if (e.key === "Home") {
+          current = 0;
+          render();
+        } else if (e.key === "End") {
+          current = slides.length - 1;
+          render();
+        }
+      });
+      let demo = 0;
+      function demoDraw() {
+        const el = document.getElementById("demoBays");
+        el.innerHTML = Array.from(
+          { length: 5 },
+          (_, i) =>
+            `<div style="text-align:center"><div style="width:48px;height:64px;border:2px solid ${i < demo ? "#c84f49" : "#16866c"};background:${i < demo ? "#f2d3d0" : "#cdebe1"};border-radius:5px;display:grid;place-items:center;font-weight:700">${i < demo ? "×" : "·"}</div><small style="color:#68727b">V${i + 1}</small></div>`,
+        ).join("");
+        document.getElementById("demoStatus").textContent =
+          `${demo} occupied · ${5 - demo} available · ${demo === 5 ? "Lot full" : "Next free bay: V" + (demo + 1)}`;
+      }
+      function demoEnter() {
+        demo = Math.min(5, demo + 1);
+        demoDraw();
+      }
+      function demoExit() {
+        demo = Math.max(0, demo - 1);
+        demoDraw();
+      }
+      function demoReset() {
+        demo = 0;
+        demoDraw();
+      }
+      demoDraw();
+      for (const id of ["mapA", "mapB", "mapC"]) {
+        document.getElementById(id).innerHTML = Array.from(
+          { length: 15 },
+          (_, i) =>
+            `<i class="bay ${[2, 6, 11].includes(i) ? "used" : ""}" title="Illustrative bay ${i + 1}"></i>`,
+        ).join("");
+      }
+      render();
+
+      // Slide overview, navigation polish, and deliberate animated diagram transitions.
+      const overview = document.getElementById("overview");
+      const overviewGrid = document.getElementById("overviewGrid");
+      overviewGrid.innerHTML = slides
+        .map((slide, i) => {
+          const title = (
+            slide.querySelector("h1,h2")?.textContent || "Slide"
+          ).trim();
+          return `<button class="overview-card" onclick="jumpTo(${i})"><small>${String(i + 1).padStart(2, "0")} / ${slides.length}</small><strong>${title.replace(/</g, "&lt;")}</strong></button>`;
+        })
+        .join("");
+      function toggleOverview() {
+        overview.classList.toggle("show");
+      }
+      function jumpTo(i) {
+        current = i;
+        overview.classList.remove("show");
+        render();
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") overview.classList.remove("show");
+        if (
+          e.key.toLowerCase() === "o" &&
+          !["INPUT", "TEXTAREA"].includes(e.target.tagName)
+        )
+          toggleOverview();
+      });
+      // Progressive demo bay transitions use the existing stateful demonstration.
+      const originalDemoDraw = demoDraw;
+      demoDraw = function () {
+        originalDemoDraw();
+        document.querySelectorAll("#demoBays>div>div").forEach((b, i) => {
+          b.style.transition =
+            "background .35s ease,border-color .35s ease,transform .4s cubic-bezier(.22,1,.36,1)";
+          b.style.transform = "scale(1)";
+          b.animate(
+            [
+              { transform: "scale(.85)", opacity: 0.65 },
+              { transform: "scale(1)", opacity: 1 },
+            ],
+            { duration: 380, delay: i * 45, easing: "ease-out" },
+          );
+        });
+      };
+    </script>
+  </body>
+</html>
