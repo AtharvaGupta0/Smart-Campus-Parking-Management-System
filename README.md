@@ -2,17 +2,14 @@
 <h2 align="center">Interactive Project Presentation</h2>
 
 <p align="center">
-  <a href="https://atharvagupta0.github.io/Smart-Campus-Parking-Management-System/Presentation/Sinister_Three_Presentation_Editorial.html">
-    <img src="https://img.shields.io/badge/Launch-Interactive_Presentation-2563EB?style=for-the-badge&logo=githubpages&logoColor=white"
-         alt="Launch Interactive Presentation">
+  <a href="https://atharvagupta0.github.io/Smart-Campus-Parking-Management-System/Presentation/Sinister_Three_Presentation_Editorial.html" target="_blank">
+    <img
+      src="docs/SinisterThreePresentationThumbnail.png"
+      alt="Smart Campus Parking Management System - Interactive Presentation"
+      width="900"
+    >
   </a>
 </p>
-
-<p align="center">
-  Explore the system architecture, features, implementation,
-  and workflow through our interactive HTML presentation.
-</p>
-
 
 
 # Smart Campus Parking Management System
