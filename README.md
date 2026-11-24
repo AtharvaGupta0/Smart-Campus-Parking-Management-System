@@ -182,3 +182,7 @@ loops, conditionals, `switch`, and modular design.
   zero-length stay and costs Rs. 0.
 - Slots are divided equally among 3 sections x 3 vehicle types = 9 pools, so
   the total slot count must be at least 9 (default 45).
+
+  <p align="center">
+  <img src="docs/diagram.png" alt="Smart Campus Parking Management System Architecture" width="800">
+</p>
